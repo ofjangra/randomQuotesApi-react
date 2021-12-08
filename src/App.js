@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { useEffect, useState } from "react";
+import Preload from "./Preload";
 
-function App() {
+
+const App = () => {
+  const [quotes, setQuotes] = useState([]);
+  const [preLoad, Load] = useState(true);
+
+  const getData = async () => {
+    const rawAPIData = await fetch("https://type.fit/api/quotes");
+    Load(false)
+    setQuotes(await rawAPIData.json());
+  };
+
+  useEffect(() => {
+    getData();
+  });
+
+  if(preLoad){
+      return(
+          <Preload />
+      )
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="main">
+      {quotes.map((quote) => {
+        return (
+          <div className="quoteWrapper">
+            <h1>{quote.text}</h1>
+            {quote.author === null ? <p>Unknown</p> : <p>{quote.author}</p>}
+          </div>
+        );
+      })}
     </div>
   );
-}
+  
+};
 
 export default App;
